@@ -1,0 +1,797 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Members and Users",
+    "description": "REST-API for users and mambers management for WebTech module",
+    "contact": {
+      "email": "freiheit@htw-berlin.de"
+    },
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://localhost:4000/api-docs",
+      "description": "local development server"
+    }
+  ],
+  "tags": [
+    {
+      "name": "users",
+      "description": "user management (registration and login))"
+    },
+    {
+      "name": "members",
+      "description": "member management  (CRUD)"
+    }
+  ],
+  "paths": {
+    "/createtable": {
+      "get": {
+        "tags": [
+          "users"
+        ],
+        "summary": "creates table users in database",
+        "description": "deletes table users (if exists) and creates a (new) table users",
+        "operationId": "createTable",
+        "responses": {
+          "200": {
+            "description": "table users created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Message"
+                  }
+                },
+                "examples": {
+                  "example": {
+                    "summary": "table users created",
+                    "value": {
+                      "message": "table users in database userdatabase created"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users": {
+      "get": {
+        "tags": [
+          "users"
+        ],
+        "summary": "get all users",
+        "description": "responses all stored users as array\n",
+        "operationId": "getAllUsers",
+        "responses": {
+          "200": {
+            "description": "get all users",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/User"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/{id}": {
+      "get": {
+        "tags": [
+          "users"
+        ],
+        "summary": "get one user with certain id",
+        "description": "responses the user with id\n",
+        "operationId": "getOneUser",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id of user",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "get one user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/User"
+                  }
+                },
+                "examples": {
+                  "example": {
+                    "summary": "user with id=11",
+                    "value": {
+                      "id": 11,
+                      "username": "doe",
+                      "password": "$2y$10$u7S78XttUNqHVSowCs41Cu/GtpzVK4Dx/D4hooEENAdxyKNUPHbVW",
+                      "email": "joe@doe.com",
+                      "role": "user"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "user not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Message"
+                  }
+                },
+                "examples": {
+                  "example": {
+                    "summary": "user not found",
+                    "value": {
+                      "message": "No user found with id=4711"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "users"
+        ],
+        "summary": "update a registered user",
+        "description": "updates a registered user",
+        "operationId": "updateUser",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id of user",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "user data to update",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/User"
+              },
+              "examples": {
+                "example": {
+                  "summary": "registered user to update (new email and new role)",
+                  "value": {
+                    "email": "newemail@doe.com",
+                    "role": "admin"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "user data updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/User"
+                  }
+                },
+                "examples": {
+                  "example": {
+                    "summary": "user data updated",
+                    "value": {
+                      "id": 61,
+                      "username": "doe",
+                      "password": "$2y$10$u7S78XttUNqHVSowCs41Cu/GtpzVK4Dx/D4hooEENAdxyKNUPHbVW",
+                      "email": "newemail@doe.com",
+                      "role": "admin"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "id does not exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Message"
+                  }
+                },
+                "examples": {
+                  "example": {
+                    "summary": "user with id does not exist",
+                    "value": {
+                      "message": "User with id=4711 does not exist"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/register": {
+      "post": {
+        "tags": [
+          "users"
+        ],
+        "summary": "register a new user",
+        "description": "creates a new user",
+        "operationId": "registerUser",
+        "requestBody": {
+          "description": "user to register",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/User"
+              },
+              "examples": {
+                "example": {
+                  "summary": "new user to register",
+                  "value": {
+                    "username": "doe",
+                    "password": "safePwd1234%",
+                    "email": "joe@doe.com",
+                    "role": "user"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "user created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/User"
+                  }
+                },
+                "examples": {
+                  "example": {
+                    "summary": "new user created",
+                    "value": {
+                      "id": 61,
+                      "username": "doe",
+                      "password": "$2y$10$u7S78XttUNqHVSowCs41Cu/GtpzVK4Dx/D4hooEENAdxyKNUPHbVW",
+                      "email": "joe@doe.com",
+                      "role": "user"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "an existing e-mail already exists",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/User"
+                  }
+                },
+                "examples": {
+                  "example": {
+                    "summary": "email already exists",
+                    "value": {
+                      "message": "E-Mail joe@doe.com already exists"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/login": {
+      "post": {
+        "tags": [
+          "users"
+        ],
+        "summary": "login a registered user",
+        "description": "checks if the user exists and if the password is correct",
+        "operationId": "loginUser",
+        "requestBody": {
+          "description": "user to login",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/User"
+              },
+              "examples": {
+                "example": {
+                  "summary": "user login",
+                  "value": {
+                    "username": "doe",
+                    "password": "safePwd1234%"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "user logged in",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Message"
+                  }
+                },
+                "examples": {
+                  "example": {
+                    "summary": "registered user logged in",
+                    "value": {
+                      "message": "user doe logged in"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "wrong password",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Message"
+                  }
+                },
+                "examples": {
+                  "example": {
+                    "summary": "wrong password",
+                    "value": {
+                      "message": "wrong password"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "username exists",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Message"
+                  }
+                },
+                "examples": {
+                  "example": {
+                    "summary": "username does not exist",
+                    "value": {
+                      "message": "username does not exist"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/members": {
+      "get": {
+        "tags": [
+          "members"
+        ],
+        "summary": "get all members",
+        "description": "responses all stored members as array",
+        "operationId": "getAllMembers",
+        "responses": {
+          "200": {
+            "description": "get all members",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Member"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "members"
+        ],
+        "summary": "create a new member",
+        "description": "creates a new member",
+        "operationId": "createMember",
+        "requestBody": {
+          "description": "user to register",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Member"
+              },
+              "examples": {
+                "example": {
+                  "summary": "new member to create",
+                  "value": {
+                    "firstname": "joe",
+                    "lastname": "doe",
+                    "email": "joe@doe.com"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "user created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/User"
+                  }
+                },
+                "examples": {
+                  "example": {
+                    "summary": "new user created",
+                    "value": {
+                      "id": 61,
+                      "firstname": "joe",
+                      "lastname": "doe",
+                      "email": "joe@doe.com"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/members/{id}": {
+      "get": {
+        "tags": [
+          "members"
+        ],
+        "summary": "get one member with certain id",
+        "description": "responses the member with id\n",
+        "operationId": "getOneMember",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id of member",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "get one member",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Member"
+                  }
+                },
+                "examples": {
+                  "example": {
+                    "summary": "member with id=11",
+                    "value": {
+                      "id": 11,
+                      "firstname": "Bonnie",
+                      "lastname": "Coleman",
+                      "email": "bcoleman11@fc2.com"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "member not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Message"
+                  }
+                },
+                "examples": {
+                  "example": {
+                    "summary": "member not found",
+                    "value": {
+                      "message": "No member found with id=4711"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "members"
+        ],
+        "summary": "update member data",
+        "description": "updates data of one member",
+        "operationId": "updateMember",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id of member",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "member data to update",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Member"
+              },
+              "examples": {
+                "example": {
+                  "summary": "member to update (new email and new lastname)",
+                  "value": {
+                    "email": "campbell17@fc2.com",
+                    "lastname": "Campbell"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "user data updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/User"
+                  }
+                },
+                "examples": {
+                  "example": {
+                    "summary": "user data updated",
+                    "value": {
+                      "id": 11,
+                      "firstname": "Bonnie",
+                      "lastname": "Campbell",
+                      "email": "campbell17@fc2.com"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "id does not exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Message"
+                  }
+                },
+                "examples": {
+                  "example": {
+                    "summary": "member with id does not exist",
+                    "value": {
+                      "message": "Member with id=4711 does not exist"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "members"
+        ],
+        "summary": "delete one member with certain id",
+        "description": "delete the member with id",
+        "operationId": "deleteOneMember",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "id of member",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "delte one member",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Message"
+                  }
+                },
+                "examples": {
+                  "example": {
+                    "summary": "delete member with id=11",
+                    "value": {
+                      "message": "member with id=11 deleted"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "member not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Message"
+                  }
+                },
+                "examples": {
+                  "example": {
+                    "summary": "member not found",
+                    "value": {
+                      "message": "No member found with id=4711"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "User": {
+        "required": [
+          "email",
+          "id",
+          "password",
+          "role",
+          "username"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "example": 11
+          },
+          "username": {
+            "type": "string",
+            "example": "userone"
+          },
+          "password": {
+            "type": "string",
+            "example": "safePwd1234%"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "test@mail.org"
+          },
+          "role": {
+            "type": "string",
+            "example": "admin"
+          }
+        }
+      },
+      "Member": {
+        "required": [
+          "email",
+          "firstname",
+          "id",
+          "lastname"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "example": 11
+          },
+          "firstname": {
+            "type": "string",
+            "example": "Maria"
+          },
+          "lastname": {
+            "type": "string",
+            "example": "Musterfrau"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "musterfrau@mail.org"
+          }
+        }
+      },
+      "Message": {
+        "required": [
+          "message"
+        ],
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "item not found"
+          }
+        }
+      }
+    }
+  }
+}
